@@ -31,13 +31,10 @@ interface Quiz {
 
 interface Question {
   id: string;
-  question_text: string;
-  option_a: string;
-  option_b: string;
-  option_c: string;
-  option_d: string;
-  correct_answer: string;
-  difficulty?: string;
+  question: string;
+  options: string[];
+  correct: number;
+  points: number;
 }
 
 const QuizTaking = () => {
@@ -130,7 +127,8 @@ const QuizTaking = () => {
   const calculateScore = () => {
     let correctAnswers = 0;
     questions.forEach((question) => {
-      if (selectedAnswers[question.id] === question.correct_answer) {
+      const selectedIndex = ['A', 'B', 'C', 'D'].indexOf(selectedAnswers[question.id] || '');
+      if (selectedIndex === question.correct) {
         correctAnswers++;
       }
     });
@@ -161,14 +159,16 @@ const QuizTaking = () => {
       // Track individual question results
       for (const question of questions) {
         const studentAnswer = selectedAnswers[question.id] || '';
-        const isCorrect = studentAnswer === question.correct_answer;
+        const selectedIndex = ['A', 'B', 'C', 'D'].indexOf(studentAnswer);
+        const isCorrect = selectedIndex === question.correct;
+        const correctAnswer = ['A', 'B', 'C', 'D'][question.correct];
         
         await trackQuizQuestion(
           attemptId!,
           question.id,
-          question.question_text,
+          question.question,
           studentAnswer,
-          question.correct_answer,
+          correctAnswer,
           isCorrect
         );
       }
@@ -271,17 +271,16 @@ const QuizTaking = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="text-lg mb-4">{currentQuestion.question_text}</p>
+            <p className="text-lg mb-4">{currentQuestion.question}</p>
             
             <div className="space-y-3">
-              {['option_a', 'option_b', 'option_c', 'option_d'].map((option, index) => {
+              {currentQuestion.options.map((optionText, index) => {
                 const optionLetter = String.fromCharCode(65 + index); // A, B, C, D
-                const optionText = currentQuestion[option as keyof Question] as string;
                 const isSelected = selectedAnswers[currentQuestion.id] === optionLetter;
                 
                 return (
                   <button
-                    key={option}
+                    key={index}
                     onClick={() => handleAnswerSelect(currentQuestion.id, optionLetter)}
                     className={`w-full text-left p-4 rounded-lg border transition-colors ${
                       isSelected 
