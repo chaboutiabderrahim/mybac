@@ -20,6 +20,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useActivityTracking } from "@/hooks/useActivityTracking";
 import { useToast } from "@/hooks/use-toast";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface Quiz {
   id: string;
@@ -36,6 +37,7 @@ const Quizzes = () => {
   const { user } = useAuth();
   const { trackQuizQuestion } = useActivityTracking();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [practiceQuizzes, setPracticeQuizzes] = useState<Quiz[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -109,8 +111,8 @@ const Quizzes = () => {
         description: `Starting ${quiz.subject} quiz with ${quiz.questions.length} questions`,
       });
 
-      // Here you would navigate to a quiz page or open a quiz modal
-      // For now, just show a placeholder
+      // Navigate to the quiz taking page
+      navigate(`/quiz/${attempt.id}`);
     } catch (error) {
       console.error('Error starting quiz:', error);
       toast({

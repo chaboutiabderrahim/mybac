@@ -20,6 +20,7 @@ const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const Videos = lazy(() => import("./pages/Videos"));
 const Exams = lazy(() => import("./pages/Exams"));
 const Quizzes = lazy(() => import("./pages/Quizzes"));
+const QuizTaking = lazy(() => import("./pages/QuizTaking"));
 const Alumni = lazy(() => import("./pages/Alumni"));
 const LearnAI = lazy(() => import("./pages/LearnAI"));
 
@@ -47,6 +48,11 @@ const App = () => (
                 <Route path="/quizzes" element={
                   <LazyLoad>
                     <Quizzes />
+                  </LazyLoad>
+                } />
+                <Route path="/quiz/:attemptId" element={
+                  <LazyLoad>
+                    <QuizTaking />
                   </LazyLoad>
                 } />
                 <Route path="/exams" element={
