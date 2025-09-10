@@ -50,6 +50,7 @@ const QuizTaking = () => {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>({});
+  const [answeredQuestions, setAnsweredQuestions] = useState<Record<string, boolean>>({});
   const [timeLeft, setTimeLeft] = useState(1800); // 30 minutes
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -106,9 +107,17 @@ const QuizTaking = () => {
   };
 
   const handleAnswerSelect = (questionId: string, answer: string) => {
+    if (answeredQuestions[questionId]) return; // Prevent changing answer after selection
+    
     setSelectedAnswers(prev => ({
       ...prev,
       [questionId]: answer
+    }));
+    
+    // Mark question as answered
+    setAnsweredQuestions(prev => ({
+      ...prev,
+      [questionId]: true
     }));
   };
 
@@ -277,24 +286,59 @@ const QuizTaking = () => {
               {currentQuestion.options.map((optionText, index) => {
                 const optionLetter = String.fromCharCode(65 + index); // A, B, C, D
                 const isSelected = selectedAnswers[currentQuestion.id] === optionLetter;
+                const isAnswered = answeredQuestions[currentQuestion.id];
+                const isCorrect = index === currentQuestion.correct;
+                const selectedIndex = ['A', 'B', 'C', 'D'].indexOf(selectedAnswers[currentQuestion.id] || '');
+                const isWrongSelection = isAnswered && isSelected && !isCorrect;
+                const isCorrectAnswer = isAnswered && isCorrect;
+                
+                let buttonClass = 'w-full text-left p-4 rounded-lg border transition-colors ';
+                if (isAnswered) {
+                  if (isCorrectAnswer) {
+                    buttonClass += 'border-green-500 bg-green-100 dark:bg-green-900/20';
+                  } else if (isWrongSelection) {
+                    buttonClass += 'border-red-500 bg-red-100 dark:bg-red-900/20';
+                  } else {
+                    buttonClass += 'border-border bg-muted/50';
+                  }
+                } else {
+                  buttonClass += isSelected 
+                    ? 'border-primary bg-primary/10' 
+                    : 'border-border hover:border-primary/50 cursor-pointer';
+                }
                 
                 return (
                   <button
                     key={index}
                     onClick={() => handleAnswerSelect(currentQuestion.id, optionLetter)}
-                    className={`w-full text-left p-4 rounded-lg border transition-colors ${
-                      isSelected 
-                        ? 'border-primary bg-primary/10' 
-                        : 'border-border hover:border-primary/50'
-                    }`}
+                    disabled={isAnswered}
+                    className={buttonClass}
                   >
                     <div className="flex items-center gap-3">
                       <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                        isSelected ? 'border-primary bg-primary text-primary-foreground' : 'border-muted-foreground'
+                        isAnswered 
+                          ? isCorrectAnswer 
+                            ? 'border-green-500 bg-green-500 text-white'
+                            : isWrongSelection
+                            ? 'border-red-500 bg-red-500 text-white'
+                            : 'border-muted-foreground'
+                          : isSelected 
+                            ? 'border-primary bg-primary text-primary-foreground' 
+                            : 'border-muted-foreground'
                       }`}>
                         {optionLetter}
                       </div>
-                      <span>{optionText}</span>
+                      <span className={
+                        isAnswered 
+                          ? isCorrectAnswer 
+                            ? 'text-green-700 dark:text-green-300 font-medium'
+                            : isWrongSelection
+                            ? 'text-red-700 dark:text-red-300'
+                            : ''
+                          : ''
+                      }>
+                        {optionText}
+                      </span>
                     </div>
                   </button>
                 );
@@ -332,7 +376,7 @@ const QuizTaking = () => {
             ) : (
               <Button
                 onClick={handleNextQuestion}
-                disabled={currentQuestionIndex === questions.length - 1}
+                disabled={!answeredQuestions[currentQuestion.id]}
               >
                 Next
               </Button>

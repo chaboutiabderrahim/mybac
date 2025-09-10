@@ -39,27 +39,30 @@ const Quizzes = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [practiceQuizzes, setPracticeQuizzes] = useState<Quiz[]>([]);
+  const [dailyQuizzes, setDailyQuizzes] = useState<Quiz[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchPracticeQuizzes();
+    fetchQuizzes();
   }, []);
 
-  const fetchPracticeQuizzes = async () => {
+  const fetchQuizzes = async () => {
     try {
       const { data, error } = await supabase
         .from('quizzes')
         .select('*')
-        .eq('type', 'practice' as any) // Cast to bypass type issue temporarily
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setPracticeQuizzes((data || []) as Quiz[]); // Cast to match our interface
+      
+      const quizzes = (data || []) as Quiz[];
+      setPracticeQuizzes(quizzes.filter(quiz => quiz.type === 'practice'));
+      setDailyQuizzes(quizzes.filter(quiz => quiz.type === 'daily'));
     } catch (error) {
-      console.error('Error fetching practice quizzes:', error);
+      console.error('Error fetching quizzes:', error);
       toast({
         title: "Error",
-        description: "Failed to load practice quizzes",
+        description: "Failed to load quizzes",
         variant: "destructive",
       });
     } finally {
@@ -202,80 +205,43 @@ const Quizzes = () => {
             </TabsList>
             
             <TabsContent value="daily" className="space-y-6">
+              {loading ? (
+                <div className="flex justify-center items-center py-12">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                </div>
+              ) : dailyQuizzes.length === 0 ? (
+                <div className="text-center py-12">
+                  <p className="text-muted-foreground">No daily quizzes available yet.</p>
+                </div>
+              ) : (
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {/* Today's Quiz */}
-                <Card className="gradient-card hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-lg">{t("today")} - March 15</CardTitle>
-                      <Badge className="bg-primary-light text-primary">{t("current")}</Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span>{t("progress")}</span>
-                        <span>12/20</span>
+                {dailyQuizzes.map((quiz) => (
+                  <Card key={quiz.id} className="gradient-card hover:shadow-lg transition-shadow">
+                    <CardHeader>
+                      <CardTitle className="text-lg">{quiz.subject}</CardTitle>
+                      <p className="text-sm text-muted-foreground">{quiz.chapter || "General Topics"}</p>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="flex items-center justify-between text-sm">
+                        <span>{quiz.questions.length} {t("questions")}</span>
+                        <Badge variant="default">Daily</Badge>
                       </div>
-                      <Progress value={60} />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">{t("currentScore")}: 48/100</span>
-                      <Button size="sm">{t("continue")}</Button>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Yesterday's Quiz */}
-                <Card className="gradient-card">
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-lg">{t("yesterday")} - March 14</CardTitle>
-                      <CheckCircle className="h-5 w-5 text-success" />
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span>{t("completed")}</span>
-                        <span>20/20</span>
+                      <div className="flex items-center justify-between text-sm">
+                        <span>Max Score: {quiz.max_score} pts</span>
+                        <span>25 pts per question</span>
                       </div>
-                      <Progress value={100} />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <Badge variant="secondary" className="bg-success-light text-success">
-                        {t("score")}: 84/100
-                      </Badge>
-                      <Button size="sm" variant="outline">{t("review")}</Button>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Day Before */}
-                <Card className="gradient-card">
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-lg">March 13</CardTitle>
-                      <CheckCircle className="h-5 w-5 text-success" />
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span>{t("completed")}</span>
-                        <span>20/20</span>
-                      </div>
-                      <Progress value={100} />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <Badge variant="secondary" className="bg-success-light text-success">
-                        {t("score")}: 76/100
-                      </Badge>
-                      <Button size="sm" variant="outline">{t("review")}</Button>
-                    </div>
-                  </CardContent>
-                </Card>
+                      <Button 
+                        className="w-full"
+                        onClick={() => startQuiz(quiz)}
+                      >
+                        <Brain className="mr-2 h-4 w-4" />
+                        {t("startQuiz")}
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
               </div>
+              )}
 
               {/* Weekly Stats */}
               <Card className="gradient-card">
