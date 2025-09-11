@@ -37,8 +37,12 @@ const LandingPage = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2 animate-slide-up">
-              <GraduationCap className="h-8 w-8 text-primary animate-bounce-subtle" />
-              <span className="text-xl font-bold text-foreground">BAC Ace AI</span>
+              <img 
+                src="/lovable-uploads/2473f7f5-d49d-4abd-8426-94b1d4b3646e.png" 
+                alt="THE SMART Logo" 
+                className="h-8 w-8 object-contain animate-bounce-subtle"
+              />
+              <span className="text-xl font-bold text-foreground">THE SMART</span>
             </div>
             <nav className="hidden md:flex items-center space-x-8">
               <button 
@@ -83,10 +87,10 @@ const LandingPage = () => {
                   🎓 AI-Powered Learning
                 </Badge>
                 <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent leading-tight animate-fade-in">
-                  Master Your BAC with AI-Powered Learning
+                  Master Your Learning with THE SMART AI Platform
                 </h1>
                 <p className="text-xl text-muted-foreground leading-relaxed animate-fade-in" style={{animationDelay: '0.2s'}}>
-                  Transform your BAC preparation with personalized AI tutoring, practice exams, and expert guidance. Join thousands of successful students.
+                  Transform your learning experience with personalized AI tutoring, practice exams, and expert guidance. Join thousands of successful students.
                 </p>
               </div>
               <div className="flex flex-col sm:flex-row gap-4 animate-fade-in" style={{animationDelay: '0.4s'}}>
@@ -142,10 +146,10 @@ const LandingPage = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16 animate-fade-in">
             <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              About BAC Ace AI
+              About THE SMART
             </h2>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              We are dedicated to revolutionizing BAC preparation through cutting-edge AI technology and personalized learning experiences.
+              We are dedicated to revolutionizing education through cutting-edge AI technology and personalized learning experiences.
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
@@ -160,7 +164,7 @@ const LandingPage = () => {
               <CardContent className="p-6 text-center">
                 <GraduationCap className="h-12 w-12 text-secondary mx-auto mb-4" />
                 <h3 className="text-xl font-semibold mb-2">Proven Results</h3>
-                <p className="text-muted-foreground">Over 10,000 students have achieved their BAC goals with us</p>
+                <p className="text-muted-foreground">Over 10,000 students have achieved their goals with us</p>
               </CardContent>
             </Card>
             <Card className="hover:scale-105 transition-all duration-300 border-primary/10 animate-fade-in" style={{animationDelay: '0.4s'}}>
@@ -182,13 +186,13 @@ const LandingPage = () => {
               Powerful Features
             </h2>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              Everything you need to succeed in your BAC examination, powered by advanced AI technology.
+              Everything you need to succeed in your examinations, powered by advanced AI technology.
             </p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               { icon: BookOpen, title: "AI Tutoring", desc: "24/7 personalized AI assistance" },
-              { icon: Trophy, title: "Practice Exams", desc: "Real BAC exams with detailed solutions" },
+              { icon: Trophy, title: "Practice Exams", desc: "Real exams with detailed solutions" },
               { icon: Users, title: "Alumni Mentoring", desc: "Connect with successful graduates" },
               { icon: Star, title: "Progress Tracking", desc: "Monitor your learning journey" },
               { icon: CheckCircle, title: "Video Lessons", desc: "Comprehensive video library" },
@@ -214,7 +218,7 @@ const LandingPage = () => {
               Get In Touch
             </h2>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              Have questions? We're here to help you succeed in your BAC journey.
+              Have questions? We're here to help you succeed in your learning journey.
             </p>
           </div>
           <div className="grid md:grid-cols-2 gap-12">
@@ -223,7 +227,7 @@ const LandingPage = () => {
                 <Mail className="h-6 w-6 text-primary" />
                 <div>
                   <h3 className="font-semibold">Email</h3>
-                  <p className="text-muted-foreground">support@bacacai.com</p>
+                  <p className="text-muted-foreground">support@thesmart.com</p>
                 </div>
               </div>
               <div className="flex items-center gap-4">
@@ -259,11 +263,15 @@ const LandingPage = () => {
           <div className="grid md:grid-cols-4 gap-8">
             <div className="space-y-4">
               <div className="flex items-center gap-2">
-                <GraduationCap className="h-6 w-6 text-primary" />
-                <span className="font-bold">BAC Ace AI</span>
+                <img 
+                  src="/lovable-uploads/2473f7f5-d49d-4abd-8426-94b1d4b3646e.png" 
+                  alt="THE SMART Logo" 
+                  className="h-6 w-6 object-contain"
+                />
+                <span className="font-bold">THE SMART</span>
               </div>
               <p className="text-muted-foreground text-sm">
-                Empowering students to excel in their BAC examinations through AI-powered learning.
+                Empowering students to excel in their examinations through AI-powered learning.
               </p>
             </div>
             <div>
@@ -292,7 +300,7 @@ const LandingPage = () => {
             </div>
           </div>
           <div className="border-t border-border/50 mt-8 pt-8 text-center text-sm text-muted-foreground">
-            <p>&copy; 2024 BAC Ace AI. All rights reserved.</p>
+            <p>&copy; 2024 THE SMART. All rights reserved.</p>
           </div>
         </div>
       </footer>

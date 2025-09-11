@@ -53,11 +53,13 @@ const Navigation = () => {
       <div className="container flex h-16 items-center justify-between">
         {/* Logo */}
         <Link to="/home" className="flex items-center space-x-2">
-          <div className="gradient-hero rounded-lg p-2">
-            <Brain className="h-6 w-6 text-white" />
-          </div>
+          <img 
+            src="/lovable-uploads/2473f7f5-d49d-4abd-8426-94b1d4b3646e.png" 
+            alt="THE SMART Logo" 
+            className="h-8 w-8 object-contain"
+          />
           <span className="font-bold text-xl gradient-hero bg-clip-text text-transparent">
-            BAC Ace AI
+            THE SMART
           </span>
         </Link>
 
