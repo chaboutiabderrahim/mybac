@@ -56,7 +56,7 @@ const Navigation = () => {
           <img 
             src="/lovable-uploads/2473f7f5-d49d-4abd-8426-94b1d4b3646e.png" 
             alt="THE SMART Logo" 
-            className="h-12 w-12 object-contain"
+            className="h-16 w-16 object-contain"
           />
           <span className="font-bold text-xl gradient-hero bg-clip-text text-transparent">
             THE SMART
