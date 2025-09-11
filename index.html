@@ -3,23 +3,43 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BAC Ace AI - AI-Powered BAC Exam Preparation for Algerian Students</title>
-    <meta name="description" content="Master your BAC exam with AI-powered quizzes, expert solutions, and personalized learning paths designed for Algerian curriculum. Join 10,000+ successful students." />
-    <meta name="author" content="BAC Ace AI Team" />
-    <meta name="keywords" content="BAC exam, Algeria, AI learning, mathematics, physics, online education, exam preparation" />
+    <title>THE SMART - AI-Powered Learning Platform</title>
+    <meta name="description" content="THE SMART - Master your exams with AI-powered quizzes, expert solutions, and personalized learning paths." />
+    <meta name="author" content="THE SMART Team" />
+    <meta name="keywords" content="smart learning, AI education, online quizzes, exam preparation, personalized learning" />
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#1a1a1a" />
+    <link rel="icon" href="/logo.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/logo.png" />
 
-    <meta property="og:title" content="BAC Ace AI - AI-Powered BAC Exam Preparation" />
-    <meta property="og:description" content="Master your BAC exam with AI-powered quizzes and personalized learning for Algerian students." />
+    <meta property="og:title" content="THE SMART - AI-Powered Learning Platform" />
+    <meta property="og:description" content="Master your exams with AI-powered quizzes and personalized learning paths." />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta property="og:image" content="/logo.png" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@lovable_dev" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta name="twitter:site" content="@thesmart" />
+    <meta name="twitter:image" content="/logo.png" />
   </head>
 
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- PWA Service Worker -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('/sw.js')
+            .then(function(registration) {
+              console.log('SW registered: ', registration);
+            }, function(registrationError) {
+              console.log('SW registration failed: ', registrationError);
+            });
+        });
+      }
+    </script>
   </body>
 </html>
