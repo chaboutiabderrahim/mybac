@@ -40,7 +40,7 @@ const LandingPage = () => {
               <img 
                 src="/lovable-uploads/2473f7f5-d49d-4abd-8426-94b1d4b3646e.png" 
                 alt="THE SMART Logo" 
-                className="h-8 w-8 object-contain animate-bounce-subtle"
+                className="h-12 w-12 object-contain animate-bounce-subtle"
               />
               <span className="text-xl font-bold text-foreground">THE SMART</span>
             </div>
@@ -266,7 +266,7 @@ const LandingPage = () => {
                 <img 
                   src="/lovable-uploads/2473f7f5-d49d-4abd-8426-94b1d4b3646e.png" 
                   alt="THE SMART Logo" 
-                  className="h-6 w-6 object-contain"
+                  className="h-10 w-10 object-contain"
                 />
                 <span className="font-bold">THE SMART</span>
               </div>

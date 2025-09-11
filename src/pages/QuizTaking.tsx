@@ -153,11 +153,23 @@ const QuizTaking = () => {
     try {
       const finalScore = calculateScore();
       
+      // Check if this is a retake (not the first attempt)
+      const { data: previousAttempts } = await supabase
+        .from('quiz_attempts')
+        .select('completed_at')
+        .eq('quiz_id', attempt?.quiz_id)
+        .eq('student_id', user!.id)
+        .not('completed_at', 'is', null)
+        .neq('id', attemptId);
+      
+      const isRetake = previousAttempts && previousAttempts.length > 0;
+      const scoreToRecord = isRetake ? 0 : finalScore; // Don't record score for retakes
+      
       // Update quiz attempt
       const { error: updateError } = await supabase
         .from('quiz_attempts')
         .update({
-          score: finalScore,
+          score: scoreToRecord,
           answers: selectedAnswers,
           completed_at: new Date().toISOString()
         })
@@ -184,7 +196,9 @@ const QuizTaking = () => {
 
       toast({
         title: "Quiz completed!",
-        description: `Your score: ${finalScore}/${quiz?.max_score || 100}`,
+        description: isRetake 
+          ? `Practice completed! Actual score: ${finalScore}/${quiz?.max_score || 100} (No points awarded for retakes)`
+          : `Your score: ${finalScore}/${quiz?.max_score || 100}`,
       });
 
       navigate('/quizzes');

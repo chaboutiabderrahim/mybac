@@ -81,21 +81,22 @@ const Quizzes = () => {
     }
 
     try {
-      // Check if quiz was already completed
+      // Check if quiz was already completed for scoring purposes
       const { data: completedAttempts } = await supabase
         .from('quiz_attempts')
-        .select('completed_at')
+        .select('completed_at, attempt_number')
         .eq('quiz_id', quiz.id)
         .eq('student_id', user.id)
         .not('completed_at', 'is', null);
 
-      if (completedAttempts && completedAttempts.length > 0) {
+      const hasCompletedBefore = completedAttempts && completedAttempts.length > 0;
+      
+      if (hasCompletedBefore) {
         toast({
-          title: "Quiz already completed",
-          description: "You have already submitted this quiz and cannot retake it.",
-          variant: "destructive",
+          title: "Retaking Quiz",
+          description: "You can practice this quiz again, but no additional score will be awarded.",
+          variant: "default",
         });
-        return;
       }
 
       // Check for existing attempts to determine attempt number
