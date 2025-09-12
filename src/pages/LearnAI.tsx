@@ -8,6 +8,7 @@ import { Brain, MessageCircle, BookOpen, Lightbulb, Sparkles, Loader2 } from "lu
 import Navigation from "@/components/layout/Navigation";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface StudyTopic {
   id: string;
@@ -42,6 +43,7 @@ const physicsChapters = [
 const studyTopics: StudyTopic[] = [];
 
 const LearnAI = () => {
+  const { user } = useAuth();
   const [selectedSubject, setSelectedSubject] = useState<string>("");
   const [selectedChapter, setSelectedChapter] = useState<string>("");
   const [question, setQuestion] = useState<string>("");
@@ -63,7 +65,7 @@ const LearnAI = () => {
   };
 
   const handleAskQuestion = async () => {
-    if (!question.trim() || isLoading) return;
+    if (!question.trim() || isLoading || !user) return;
     
     setIsLoading(true);
     const userQuestion = question;
@@ -226,15 +228,15 @@ const LearnAI = () => {
                   
                   <div className="space-y-3">
                     <Textarea
-                      placeholder={selectedChapter ? "اسأل سؤالاً حول الفصل المختار..." : "اختر موضوعاً أولاً، ثم اسأل سؤالك..."}
+                      placeholder={user ? (selectedChapter ? "اسأل سؤالاً حول الفصل المختار..." : "اختر موضوعاً أولاً، ثم اسأل سؤالك...") : "يجب تسجيل الدخول للاستفادة من الذكاء الاصطناعي"}
                       value={question}
                       onChange={(e) => setQuestion(e.target.value)}
-                      disabled={!selectedChapter || isLoading}
+                      disabled={!selectedChapter || isLoading || !user}
                       className="min-h-[80px]"
                     />
                     <Button 
                       onClick={handleAskQuestion}
-                      disabled={!question.trim() || !selectedChapter || isLoading}
+                      disabled={!question.trim() || !selectedChapter || isLoading || !user}
                       className="w-full"
                     >
                       {isLoading ? (
