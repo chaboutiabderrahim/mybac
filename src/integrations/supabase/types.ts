@@ -44,6 +44,36 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_learning_conversations: {
+        Row: {
+          answer_text: string
+          chapter: string | null
+          created_at: string
+          id: string
+          question_text: string
+          subject: string | null
+          user_id: string
+        }
+        Insert: {
+          answer_text: string
+          chapter?: string | null
+          created_at?: string
+          id?: string
+          question_text: string
+          subject?: string | null
+          user_id: string
+        }
+        Update: {
+          answer_text?: string
+          chapter?: string | null
+          created_at?: string
+          id?: string
+          question_text?: string
+          subject?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       alumni: {
         Row: {
           advice: string | null

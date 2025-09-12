@@ -4,8 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Brain, MessageCircle, BookOpen, Lightbulb, Sparkles } from "lucide-react";
+import { Brain, MessageCircle, BookOpen, Lightbulb, Sparkles, Loader2 } from "lucide-react";
 import Navigation from "@/components/layout/Navigation";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface StudyTopic {
   id: string;
@@ -15,40 +17,29 @@ interface StudyTopic {
   tips: string[];
 }
 
-const studyTopics: StudyTopic[] = [
-  {
-    id: "1",
-    subject: "Math",
-    chapter: "Limits",
-    keyConcepts: [
-      "Definition of limits and continuity",
-      "L'Hôpital's rule for indeterminate forms",
-      "Limit properties and theorems",
-      "Infinite limits and limits at infinity"
-    ],
-    tips: [
-      "Practice identifying indeterminate forms first",
-      "Master basic limit laws before complex problems",
-      "Draw graphs to visualize limit behavior"
-    ]
-  },
-  {
-    id: "2", 
-    subject: "Physics",
-    chapter: "Mechanics",
-    keyConcepts: [
-      "Newton's three laws of motion",
-      "Force analysis and free body diagrams",
-      "Kinematic equations for motion",
-      "Work, energy, and power relationships"
-    ],
-    tips: [
-      "Always start with a clear free body diagram",
-      "Identify all forces before applying equations",
-      "Practice unit conversions regularly"
-    ]
-  }
+const mathChapters = [
+  { value: "derivatives", label: "📘 الاشتقاقية والمشتقات" },
+  { value: "exponential", label: "📘 الدوال الأسية" },
+  { value: "logarithmic", label: "📘 الدوال اللوغاريتمية" },
+  { value: "limits", label: "📘 النهايات والمستقيمات المقاربة" },
+  { value: "sequences", label: "📘 المتتاليات العددية" },
+  { value: "integration", label: "📘 التكامل والحساب التكاملي" },
+  { value: "integers", label: "📘 الحساب في مجموعة الأعداد الصحيحة ℤ" },
+  { value: "probability", label: "📘 الاحتمالات والإحصاء" },
+  { value: "complex", label: "📘 الأعداد المركبة والتحويلات" },
+  { value: "geometry", label: "📘 الهندسة في الفضاء" }
 ];
+
+const physicsChapters = [
+  { value: "chemical_tracking", label: "⚡ المتابعة الزمنية لتحول كيميائي" },
+  { value: "mechanical_evolution", label: "⚡ تطور جملة ميكانيكياً" },
+  { value: "electrical_phenomena", label: "⚡ دراسة ظواهر كهربائية" },
+  { value: "chemical_equilibrium", label: "⚡ تطور جملة كيميائية نحو حالة التوازن" },
+  { value: "nuclear_transformations", label: "⚡ دراسة التحولات النووية" },
+  { value: "chemical_monitoring", label: "⚡ مراقبة تطور جملة كيميائية" }
+];
+
+const studyTopics: StudyTopic[] = [];
 
 const LearnAI = () => {
   const [selectedSubject, setSelectedSubject] = useState<string>("");
@@ -56,6 +47,8 @@ const LearnAI = () => {
   const [question, setQuestion] = useState<string>("");
   const [currentTopic, setCurrentTopic] = useState<StudyTopic | null>(null);
   const [chatMessages, setChatMessages] = useState<Array<{role: 'user' | 'ai', content: string}>>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { toast } = useToast();
 
   const handleSubjectChange = (subject: string) => {
     setSelectedSubject(subject);
@@ -69,15 +62,52 @@ const LearnAI = () => {
     setCurrentTopic(topic || null);
   };
 
-  const handleAskQuestion = () => {
-    if (!question.trim()) return;
+  const handleAskQuestion = async () => {
+    if (!question.trim() || isLoading) return;
     
+    setIsLoading(true);
+    const userQuestion = question;
+    setQuestion("");
+    
+    // Add user message immediately
     setChatMessages(prev => [
       ...prev,
-      { role: 'user', content: question },
-      { role: 'ai', content: `Great question about ${selectedChapter}! Based on the Algerian BAC curriculum, here's a detailed explanation... (AI integration coming soon)` }
+      { role: 'user', content: userQuestion }
     ]);
-    setQuestion("");
+
+    try {
+      const { data, error } = await supabase.functions.invoke('gemini-chat', {
+        body: { 
+          question: userQuestion,
+          subject: selectedSubject,
+          chapter: selectedChapter
+        }
+      });
+
+      if (error) throw error;
+
+      // Add AI response
+      setChatMessages(prev => [
+        ...prev,
+        { role: 'ai', content: data.answer }
+      ]);
+
+    } catch (error) {
+      console.error('Error asking question:', error);
+      toast({
+        title: "خطأ في الاتصال",
+        description: "حدث خطأ أثناء الحصول على الإجابة. يرجى المحاولة مرة أخرى.",
+        variant: "destructive",
+      });
+      
+      // Add error message to chat
+      setChatMessages(prev => [
+        ...prev,
+        { role: 'ai', content: "عذراً، حدث خطأ أثناء معالجة سؤالك. يرجى المحاولة مرة أخرى." }
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -88,10 +118,10 @@ const LearnAI = () => {
         <div className="max-w-6xl mx-auto space-y-6">
           <div className="text-center space-y-2">
             <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              Learn with AI
+              تعلم مع الذكاء الاصطناعي
             </h1>
             <p className="text-muted-foreground text-lg">
-              Get personalized study guidance powered by artificial intelligence
+              احصل على إرشادات دراسية مخصصة مدعومة بالذكاء الاصطناعي
             </p>
           </div>
 
@@ -101,83 +131,55 @@ const LearnAI = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Brain className="h-5 w-5 text-primary" />
-                    Select Topic
+                    اختر الموضوع
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <Select value={selectedSubject} onValueChange={handleSubjectChange}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Choose Subject" />
+                      <SelectValue placeholder="اختر المادة" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Math">Mathematics</SelectItem>
-                      <SelectItem value="Physics">Physics</SelectItem>
-                      <SelectItem value="Chemistry">Chemistry</SelectItem>
+                      <SelectItem value="Math">📘 الرياضيات</SelectItem>
+                      <SelectItem value="Physics">⚡ الفيزياء</SelectItem>
                     </SelectContent>
                   </Select>
 
                   <Select value={selectedChapter} onValueChange={handleChapterChange} disabled={!selectedSubject}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Choose Chapter" />
+                      <SelectValue placeholder="اختر الفصل" />
                     </SelectTrigger>
                     <SelectContent>
-                      {selectedSubject === "Math" && (
-                        <>
-                          <SelectItem value="Limits">Limits</SelectItem>
-                          <SelectItem value="Derivatives">Derivatives</SelectItem>
-                          <SelectItem value="Integrals">Integrals</SelectItem>
-                        </>
-                      )}
-                      {selectedSubject === "Physics" && (
-                        <>
-                          <SelectItem value="Mechanics">Mechanics</SelectItem>
-                          <SelectItem value="Thermodynamics">Thermodynamics</SelectItem>
-                          <SelectItem value="Electricity">Electricity</SelectItem>
-                        </>
-                      )}
+                      {selectedSubject === "Math" && mathChapters.map((chapter) => (
+                        <SelectItem key={chapter.value} value={chapter.value}>
+                          {chapter.label}
+                        </SelectItem>
+                      ))}
+                      {selectedSubject === "Physics" && physicsChapters.map((chapter) => (
+                        <SelectItem key={chapter.value} value={chapter.value}>
+                          {chapter.label}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </CardContent>
               </Card>
 
-              {currentTopic && (
+              {selectedChapter && (
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <BookOpen className="h-5 w-5 text-accent" />
-                      Key Concepts
+                      نصائح الدراسة
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <ul className="space-y-2">
-                      {currentTopic.keyConcepts.map((concept, index) => (
-                        <li key={index} className="flex items-start gap-2">
-                          <div className="h-2 w-2 rounded-full bg-primary mt-2 flex-shrink-0" />
-                          <span className="text-sm">{concept}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-              )}
-
-              {currentTopic && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Lightbulb className="h-5 w-5 text-warning" />
-                      Study Tips
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-2">
-                      {currentTopic.tips.map((tip, index) => (
-                        <li key={index} className="flex items-start gap-2">
-                          <Sparkles className="h-4 w-4 text-warning mt-0.5 flex-shrink-0" />
-                          <span className="text-sm">{tip}</span>
-                        </li>
-                      ))}
-                    </ul>
+                    <div className="space-y-3 text-sm">
+                      <p>✨ اقرأ المفاهيم الأساسية أولاً</p>
+                      <p>✨ حل التمارين التطبيقية خطوة بخطوة</p>
+                      <p>✨ راجع الأمثلة المحلولة في الكتاب</p>
+                      <p>✨ اسأل الذكاء الاصطناعي عن أي استفسار</p>
+                    </div>
                   </CardContent>
                 </Card>
               )}
@@ -188,10 +190,10 @@ const LearnAI = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <MessageCircle className="h-5 w-5 text-primary" />
-                    AI Study Assistant
+                    مساعد الذكاء الاصطناعي للدراسة
                   </CardTitle>
                   <CardDescription>
-                    Ask questions about {selectedChapter || "any topic"} and get detailed explanations
+                    اسأل أسئلة حول {selectedChapter ? "الفصل المختار" : "أي موضوع"} واحصل على شروحات مفصلة
                   </CardDescription>
                 </CardHeader>
                 
@@ -201,8 +203,8 @@ const LearnAI = () => {
                       <div className="h-full flex items-center justify-center text-center text-muted-foreground">
                         <div className="space-y-2">
                           <Brain className="h-12 w-12 mx-auto text-primary/50" />
-                          <p>Select a topic and ask your first question!</p>
-                          <p className="text-sm">I'm here to help you understand BAC concepts step by step.</p>
+                          <p>اختر موضوعاً واسأل سؤالك الأول!</p>
+                          <p className="text-sm">أنا هنا لمساعدتك في فهم مفاهيم البكالوريا خطوة بخطوة.</p>
                         </div>
                       </div>
                     ) : (
@@ -224,19 +226,28 @@ const LearnAI = () => {
                   
                   <div className="space-y-3">
                     <Textarea
-                      placeholder={selectedChapter ? `Ask a question about ${selectedChapter}...` : "Select a topic first, then ask your question..."}
+                      placeholder={selectedChapter ? "اسأل سؤالاً حول الفصل المختار..." : "اختر موضوعاً أولاً، ثم اسأل سؤالك..."}
                       value={question}
                       onChange={(e) => setQuestion(e.target.value)}
-                      disabled={!selectedChapter}
+                      disabled={!selectedChapter || isLoading}
                       className="min-h-[80px]"
                     />
                     <Button 
                       onClick={handleAskQuestion}
-                      disabled={!question.trim() || !selectedChapter}
+                      disabled={!question.trim() || !selectedChapter || isLoading}
                       className="w-full"
                     >
-                      <MessageCircle className="h-4 w-4 mr-2" />
-                      Ask AI Assistant
+                      {isLoading ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          جاري الحصول على الإجابة...
+                        </>
+                      ) : (
+                        <>
+                          <MessageCircle className="h-4 w-4 mr-2" />
+                          اسأل المساعد الذكي
+                        </>
+                      )}
                     </Button>
                   </div>
                 </CardContent>
