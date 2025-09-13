@@ -119,19 +119,19 @@ const LearnAI = () => {
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto space-y-6">
           <div className="text-center space-y-2">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
               تعلم مع الذكاء الاصطناعي
             </h1>
-            <p className="text-muted-foreground text-lg">
+            <p className="text-muted-foreground text-base md:text-lg">
               احصل على إرشادات دراسية مخصصة مدعومة بالذكاء الاصطناعي
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-1 space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+            <div className="lg:col-span-1 space-y-4 md:space-y-6">
               <Card className="border-2 border-primary/20">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
                     <Brain className="h-5 w-5 text-primary" />
                     اختر الموضوع
                   </CardTitle>
@@ -170,7 +170,7 @@ const LearnAI = () => {
               {selectedChapter && (
                 <Card>
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
+                    <CardTitle className="flex items-center gap-2 text-base md:text-lg">
                       <BookOpen className="h-5 w-5 text-accent" />
                       نصائح الدراسة
                     </CardTitle>
@@ -188,37 +188,37 @@ const LearnAI = () => {
             </div>
 
             <div className="lg:col-span-2">
-              <Card className="h-[600px] flex flex-col">
+              <Card className="h-[500px] md:h-[600px] flex flex-col">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
                     <MessageCircle className="h-5 w-5 text-primary" />
                     مساعد الذكاء الاصطناعي للدراسة
                   </CardTitle>
-                  <CardDescription>
+                  <CardDescription className="text-sm md:text-base">
                     اسأل أسئلة حول {selectedChapter ? "الفصل المختار" : "أي موضوع"} واحصل على شروحات مفصلة
                   </CardDescription>
                 </CardHeader>
                 
                 <CardContent className="flex-1 flex flex-col">
-                  <div className="flex-1 bg-muted/20 rounded-lg p-4 mb-4 overflow-y-auto">
+                  <div className="flex-1 bg-muted/20 rounded-lg p-3 md:p-4 mb-4 overflow-y-auto">
                     {chatMessages.length === 0 ? (
                       <div className="h-full flex items-center justify-center text-center text-muted-foreground">
                         <div className="space-y-2">
-                          <Brain className="h-12 w-12 mx-auto text-primary/50" />
-                          <p>اختر موضوعاً واسأل سؤالك الأول!</p>
-                          <p className="text-sm">أنا هنا لمساعدتك في فهم مفاهيم البكالوريا خطوة بخطوة.</p>
+                          <Brain className="h-10 w-10 md:h-12 md:w-12 mx-auto text-primary/50" />
+                          <p className="text-sm md:text-base">اختر موضوعاً واسأل سؤالك الأول!</p>
+                          <p className="text-xs md:text-sm">أنا هنا لمساعدتك في فهم مفاهيم البكالوريا خطوة بخطوة.</p>
                         </div>
                       </div>
                     ) : (
                       <div className="space-y-4">
                         {chatMessages.map((message, index) => (
                           <div key={index} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                            <div className={`max-w-[80%] p-3 rounded-lg ${
+                            <div className={`max-w-[85%] md:max-w-[80%] p-3 rounded-lg ${
                               message.role === 'user' 
                                 ? 'bg-primary text-primary-foreground' 
                                 : 'bg-card border'
                             }`}>
-                              <p className="text-sm">{message.content}</p>
+                              <p className="text-xs md:text-sm whitespace-pre-wrap">{message.content}</p>
                             </div>
                           </div>
                         ))}
@@ -232,12 +232,12 @@ const LearnAI = () => {
                       value={question}
                       onChange={(e) => setQuestion(e.target.value)}
                       disabled={!selectedChapter || isLoading || !user}
-                      className="min-h-[80px]"
+                      className="min-h-[60px] md:min-h-[80px] text-sm md:text-base"
                     />
                     <Button 
                       onClick={handleAskQuestion}
                       disabled={!question.trim() || !selectedChapter || isLoading || !user}
-                      className="w-full"
+                      className="w-full text-sm md:text-base"
                     >
                       {isLoading ? (
                         <>

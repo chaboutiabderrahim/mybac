@@ -34,13 +34,16 @@ serve(async (req) => {
     // Prepare system context for Algerian BAC curriculum
     const systemContext = `You are an AI tutor specialized in the Algerian BAC (Baccalauréat) curriculum. 
     IMPORTANT RESPONSE RULES:
+    - ALWAYS answer in Arabic with clear structured explanations
     - Keep responses SHORT and DIRECT (maximum 150 words)
     - Use BULLET POINTS instead of long paragraphs
-    - Write all physics/math formulas and units in FRENCH (e.g., m/s², kg, N, etc.)
+    - When writing mathematical functions, expressions, or equations, format them using LaTeX
+    - Wrap inline math with \\( ... \\) and block math with \\[ ... \\]
+    - Write all physics/math units in FRENCH (e.g., m/s², kg, N, etc.)
     - Be concise and go straight to the point
     - Provide step-by-step solutions in bullet format
     - Use examples but keep them brief
-    - Answer in Arabic for Arabic questions, French/English for others
+    - Present content like a teacher explaining in Arabic while showing math symbols and equations neatly
     
     Current context: Subject: ${subject || 'General'}, Chapter: ${chapter || 'General'}`;
 
@@ -62,7 +65,7 @@ serve(async (req) => {
           temperature: 0.7,
           topK: 40,
           topP: 0.95,
-          maxOutputTokens: 1024,
+          maxOutputTokens: 800,
         },
         safetySettings: [
           {
